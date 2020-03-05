@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>Chat Time</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -30,10 +30,11 @@
           $('#m').val('');
           return false;
         });
-        socket.on('chat message', function(msg){
-           $('#messages').append($('<li>').text(msg));
+        socket.on('chat message', function(msg, date){
+           $();
+           $('#messages').append($('<li>').text(msg + "\t\tsent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));
         });
       });
     </script>
   </body>
-</html
+</html> 
