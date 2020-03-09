@@ -12,18 +12,21 @@
   <head>
     <title>Chat Time</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- script src="client.js"></script-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <link href="indexStyle.css" rel="styleSheet">
   </head>
   
   <body>
     <div class="grid-container"> 
       <div class="gMessages"> 
-        <div class="topID" id="top"> You are: </div>
+        <div class="topID" id="top">You are: </div>
         <ul id="messages"></ul> 
       </div>
   
       <div class="gInputForm">
-        <form action="">
+        <form id="enterMessage" action="">
           <input id="m" autocomplete="off" /><button>Send</button>
         </form>
       </div>
@@ -35,22 +38,40 @@
 
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
     <script>
       $(function () {
         var socket = io();
+        
+        let name = "";
+        socket.emit('newUser', name);
+
         $('form').submit(function(e){
           e.preventDefault(); // prevents page reloading
           socket.emit('chat message', $('#m').val());
           $('#m').val('');
           return false;
         });
-        socket.on('chat message', function(msg, date, nickName){
-          $();
-          $('#top').append(" " + nickName);
-          $('#messages').append($('<li>').text(nickName + ": " + msg + "\t\tsent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));
+
+        socket.on('updateName', function(name){
+          $('#top').append(" " + name);
         });
+
+        socket.on('chat message', function(msg, date, nickName, color){
+          $();
+         //$('#messages').add($('<li>').html("<div id=\"content\">" + nickName + ": " + msg + "</div>" + "\t\tsent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));
+
+          $('#messages').append($('<li>').html(nickName + ": " + msg + "\t\tsent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));
+          $('#content').css("color", color);
+        });
+
+        socket.on('self message', function(msg, date, nickName, color){
+          $();
+          $('#messages').append($('<li>').html("<b>" + nickName + ": " + msg + "</b>" + 
+            "\t\tsent on " + date[0] + ". " 
+            + date[1] + "/" + date[2] + " at " + date[3]));
+          //$('#messages').css("color", color);
+          });
 
       });
     </script>

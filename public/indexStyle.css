@@ -11,7 +11,7 @@ body {
     padding: 0; 
     box-sizing: border-box; 
     background-color:black; 
-    font: 13px Helvetica, Arial; 
+    font: 18px Helvetica, Arial; 
 }
 
 .topID {
@@ -29,10 +29,10 @@ body {
 
 .grid-container {
     display: grid; 
-    grid-template-columns: 1000px 300px 500px;
-    grid-template-rows: 450px 515px;
+    /*grid-template-columns: 66% 33% ;*/
+    /*grid-template-rows: 450px 515px; */
     column-gap: 50px;
-    grid-auto-flow: row;
+    grid-auto-flow: row-reverse;
 }
 
 .gMessages { 
@@ -48,6 +48,7 @@ body {
 
 .gMessages li {
     width: 60%;
+    max-width: 60%;
     list-style-type: none; 
     padding-top: 5px;
 }
@@ -66,7 +67,7 @@ body {
     margin-top: 35px;
     margin-right: 50px;
     padding: 0px;
-    width: 100%;
+    width: 90%;
     height: 100%;
     grid-row: 1 / 3;
     grid-column: 3;
