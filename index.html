@@ -62,25 +62,23 @@
          //$('#messages').add($('<li>').html("<div id=\"content\">" + nickName + ": " + msg + "</div>" + "\t\tsent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));
 
         
-          $('#messages').append($('<li class="msg" id="nick">').html(nickName + ": "));
-          $('#messages').append($('<li class="msg" id="mm">').html(msg));
+          $('#messages').append($('<li class="msg" id="nick">').html(nickName + ": " + msg));
+          //$('#nick').append($('<div class="msg" id="mm">').text(msg));
           $('#messages').append($('<li class="date">').html("sent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));          
           $('#nick').css("color", color);
         });
 
         socket.on('self message', function(msg, date, nickName, color){
           $();
-          $('#messages').append($('<li> <div class="msg" id="nick">').html("<b>" + nickName + "</div>" + ": " + msg + "</b>")); 
+          $('#messages').append($('<li class="msg" id="nick">').html("<b>" + nickName + ": " + msg + "</b>")); 
           //$('#nick').append($('<div/>').html("<b>" + msg + "</b></li>")); 
           $('#messages').append($('<li class="date">').html("sent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));
           $('#nick').css("color", color);
           });
 
-        socket.on('updateActiveUsers', function(usedNames){
-          for(var i = 0; i < usedNames.length; usedNames){
-            $();
-            $('#activeUsers').append($('<li>').html(usedNames[i])); 
-          }
+        socket.on('updateActiveUsers', function(usedName){
+          $('#activeUsers').html("<ul>");
+          $('#activeUsers').append($('<li>').html(usedName)); 
         });
 
         socket.on('inputError', function(){

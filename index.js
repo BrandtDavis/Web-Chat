@@ -26,7 +26,7 @@ app.use(cookieParser())
 
 // Store possible nicknames for users in a global array
 // along with a count of how many users are online
-var nameList = ["nick_cage", "ESPDude55", "datBoi", "crash", "Frogger", "Marsellus", "Jules"];
+var nameList = ["nick_cage", "ESP", "datBoi", "crash", "Frogger", "Marsellus", "Jules"];
 var usedNames = [];
 var numUsers = 0;
 
@@ -143,7 +143,10 @@ io.on('connection', function(socket){
     console.log("The following names are currently in use: " + usedNames);
     console.log();
     socket.emit('updateName', name);
-    //socket.broadcast.emit('updateActiveUsers', usedNames);
+    //for(var i = 0; i < usedNames.length; i++){
+    //  io.sockets.emit('updateActiveUsers', usedNames[i]);
+    //}
+
 
     socket.on('chat message', function(msg, date, nickName){
       let d = new Date();         // Instantiate new Date object
@@ -161,13 +164,15 @@ io.on('connection', function(socket){
         if(msg.includes("/nickcolor")){
           let str = msg.split(" ");
           
-          console.log(str[1].length)
-          
-          if(rgb.length !== 6 && rgb.length !== 3){
+          console.log(str[1])
+          if(str[1] === undefined || str[1].length !== 6 && str[1].length !== 3 ){
             socket.emit('inputError', function(){});
           }
-          userColors[socket.id] = "#" + str[1];
-          console.log("color updated");
+          else {
+            console.log(str[1].length)
+            userColors[socket.id] = "#" + str[1];
+            console.log("color updated to " + userColors[socket.id]);
+          }
         }
         else if(msg.includes("/nick")){
           let str = msg.split(" ");
@@ -186,7 +191,7 @@ io.on('connection', function(socket){
       }
 
       let color = userColors[socket.id];
-      console.log(socket.id);
+      console.log(socket.id + " " + color);
       // Send to all clients except sender
       socket.broadcast.emit('chat message', msg, date, nickName, color);
 
@@ -205,6 +210,10 @@ io.on('connection', function(socket){
             break;
           }
         }
+        for(var i = 0; i < usedNames.length; i++){
+
+          io.sockets.emit('updateActiveUsers', usedNames[i]);
+        }
 
       console.log("deleted socket " + socket.id);
       numUsers--;
@@ -212,6 +221,6 @@ io.on('connection', function(socket){
     });
   });
 
-http.listen(3000, function(){
+http.listen(3001, function(){
   console.log('listening on *:3000');
 });
