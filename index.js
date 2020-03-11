@@ -31,6 +31,8 @@ var usedNames = [];
 var numUsers = 0;
 
 var activeUsers = {};
+var userColors = {};
+
 
 // This function takes a date objecnullt and 
 // outputs the textual version of month 
@@ -79,6 +81,28 @@ function calcTime(date){for (var socketid in io.sockets.sockets) {}
   return time;
 }
 
+function changeNickname(socket, newName){
+  // Check if the new name is in use at all
+  // --------------------------------------
+  // If so, sent alert, return
+  if(usedNames.includes(newName)){
+    socket.emit('nickNameError', function(){});
+    return;
+  }
+  // Else, assign the name as normal, after freeing the old name
+  else {
+    console.log("Assigning names in the usual way for user: " + numUsers);
+    activeUsers[socket.id] = newName;  // Store nickName as value in activeUsers dict
+    for(var i = 0; i < usedNames.length; i++){
+      if(usedNames[i] === activeUsers[socket.id]){
+        usedNames.splice(i, 1);
+      }
+    }
+    usedNames.push(newName);   // Push the newly assigned nickName onto an array to keep track of
+  }
+  name = activeUsers[socket.id];
+}
+
 
 app.get('/', function(req, res){
   //res.send(req.cookies);
@@ -90,7 +114,7 @@ io.on('connection', function(socket){
     numUsers++;
 
     console.log("New user connected! there are now " + numUsers + " users"); 
-   
+    userColors[socket.id] = "#000000"
     // Check if the next nickName is already in use
     // --------------------------------------------
     // If so, iterate over all potential(default) nickNames until one is found
@@ -119,6 +143,7 @@ io.on('connection', function(socket){
     console.log("The following names are currently in use: " + usedNames);
     console.log();
     socket.emit('updateName', name);
+    //socket.broadcast.emit('updateActiveUsers', usedNames);
 
     socket.on('chat message', function(msg, date, nickName){
       let d = new Date();         // Instantiate new Date object
@@ -128,17 +153,39 @@ io.on('connection', function(socket){
       let time = calcTime(d);     // Get the current hour and minutes
 
       date = [month, day, year, time];  // Store date information in an array to emit to client
-      //nickName = setNickName(socket, numUsers)       //
       nickName = activeUsers[socket.id];
 
-      let r = "";
-      let g = "00";
-      let b = "00";
-      if(msg.includes("/nickcolor")){
-        console.log("color updated");
+
+
+      if(msg.includes("/")){
+        if(msg.includes("/nickcolor")){
+          let str = msg.split(" ");
+          
+          console.log(str[1].length)
+          
+          if(rgb.length !== 6 && rgb.length !== 3){
+            socket.emit('inputError', function(){});
+          }
+          userColors[socket.id] = "#" + str[1];
+          console.log("color updated");
+        }
+        else if(msg.includes("/nick")){
+          let str = msg.split(" ");
+          console.log("Changing names to: " + str[1]);
+          if(str[1].length <= 0){
+            socket.emit('inputError', function(){});
+           } 
+           else {
+             changeNickname(socket, str[1]);
+             socket.emit('updateName', name);
+           }
+        }
+        else {
+         socket.emit('inputError', function(){});
+        }
       }
 
-      let color = "#" + r + g + b;
+      let color = userColors[socket.id];
       console.log(socket.id);
       // Send to all clients except sender
       socket.broadcast.emit('chat message', msg, date, nickName, color);

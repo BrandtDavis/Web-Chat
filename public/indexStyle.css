@@ -14,6 +14,12 @@ body {
     font: 18px Helvetica, Arial; 
 }
 
+/* I used this for info on scrolling */
+/* https://www.w3schools.com/cssref/pr_pos_overflow.asp */
+body:overflow-y {
+    overflow-y: scroll;
+}
+
 .topID {
     margin-top: 10px;
     margin-left: 15px;
@@ -29,8 +35,7 @@ body {
 
 .grid-container {
     display: grid; 
-    /*grid-template-columns: 66% 33% ;*/
-    /*grid-template-rows: 450px 515px; */
+    /*grid-template-columns: 66% 33% ;*/ 
     column-gap: 50px;
     grid-auto-flow: row-reverse;
 }
@@ -46,6 +51,12 @@ body {
     background-color: lightslategrey;
 }
 
+.date {
+    vertical-align: top;
+    font-size: small;
+    margin-left: 15px;
+    margin-bottom: 5px;
+}
 .gMessages li {
     width: 60%;
     max-width: 60%;
@@ -82,7 +93,6 @@ form {
     display: inline-flex;
     width: 100%;
     margin-right: 5px;
-    margin-bottom: 10px;
 }
 
 form input { 

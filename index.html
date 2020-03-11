@@ -54,24 +54,41 @@
         });
 
         socket.on('updateName', function(name){
-          $('#top').append(" " + name);
+          $('#top').html("You are " + name);
         });
 
         socket.on('chat message', function(msg, date, nickName, color){
           $();
          //$('#messages').add($('<li>').html("<div id=\"content\">" + nickName + ": " + msg + "</div>" + "\t\tsent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));
 
-          $('#messages').append($('<li>').html(nickName + ": " + msg + "\t\tsent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));
-          $('#content').css("color", color);
+        
+          $('#messages').append($('<li class="msg" id="nick">').html(nickName + ": "));
+          $('#messages').append($('<li class="msg" id="mm">').html(msg));
+          $('#messages').append($('<li class="date">').html("sent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));          
+          $('#nick').css("color", color);
         });
 
         socket.on('self message', function(msg, date, nickName, color){
           $();
-          $('#messages').append($('<li>').html("<b>" + nickName + ": " + msg + "</b>" + 
-            "\t\tsent on " + date[0] + ". " 
-            + date[1] + "/" + date[2] + " at " + date[3]));
-          //$('#messages').css("color", color);
+          $('#messages').append($('<li> <div class="msg" id="nick">').html("<b>" + nickName + "</div>" + ": " + msg + "</b>")); 
+          //$('#nick').append($('<div/>').html("<b>" + msg + "</b></li>")); 
+          $('#messages').append($('<li class="date">').html("sent on " + date[0] + ". " + date[1] + "/" + date[2] + " at " + date[3]));
+          $('#nick').css("color", color);
           });
+
+        socket.on('updateActiveUsers', function(usedNames){
+          for(var i = 0; i < usedNames.length; usedNames){
+            $();
+            $('#activeUsers').append($('<li>').html(usedNames[i])); 
+          }
+        });
+
+        socket.on('inputError', function(){
+          alert("That is not a valid command.\nTry either \"\/nickcolor RRGGBB\" or \"/nick <new nickname>\"");
+        });
+        socket.on('nickNameError', function(){
+          alert("Sorry, that nickName is already in use.  Please pick a different one.");
+        });
 
       });
     </script>
